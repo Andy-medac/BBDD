@@ -148,3 +148,62 @@ BEGIN
                          || v_marca);
 
 END;
+
+// 7. Mostrar la suma de ventas. Pasa el dni del empleado por parámetro.
+
+DECLARE
+    v_dni_empleado vende.dni_empleado%TYPE := &dni_empleado;
+    v_precio       vende.precio%TYPE;
+BEGIN
+    SELECT
+        SUM(precio)
+    INTO v_precio
+    FROM
+        vende
+    WHERE
+        v_dni_empleado = dni_empleado;
+
+    dbms_output.put_line('Suma total de ventas: ' || v_precio);
+EXCEPTION
+    WHEN no_data_found THEN
+        dbms_output.put_line('No se ha encontrado ese empleado.');
+END;
+
+// 8. Mostrar cuantos modelos de coches hay de la marca 'Citroen'.
+DECLARE
+    cantidad   NUMBER;
+    v_id_marca modelo_coche.id_marca%TYPE;
+    v_marca    marcas_coche.marca%TYPE := &marca;
+BEGIN
+    SELECT
+        COUNT(mo.id_marca)
+    INTO cantidad
+    FROM
+             modelo_coche mo
+        JOIN marcas_coche ma ON mo.id_marca = ma.id_marca
+    WHERE
+        v_marca = ma.marca;
+
+    dbms_output.put_line('Número total de coches: ' || cantidad);
+END;
+
+// 9. 
+DECLARE
+    v_dni_empleado vende.dni_empleado%TYPE := &dni_empleado;
+    v_precio       vende.precio%TYPE;
+BEGIN
+    SELECT
+        SUM(precio)
+    INTO v_precio
+    FROM vende
+    WHERE
+        v_dni_empleado = dni_empleado;
+IF v_precio IS NULL THEN   
+    dbms_output.put_line('Precio de ventas nulo.');
+ELSE 
+dbms_output.put_line('Suma total de ventas: ' || v_precio);
+END IF; 
+EXCEPTION
+    WHEN no_data_found THEN
+        dbms_output.put_line('No se ha encontrado ese empleado.');
+END;

@@ -1,4 +1,4 @@
-//1. Descripción de los modelos de coche correspondientes a una marca específica, por ejemplo marca con id = 3. 
+//1. DescripciÃ³n de los modelos de coche correspondientes a una marca especÃ­fica, por ejemplo marca con id = 3. 
 DECLARE
     v_id_marca    modelo_coche.id_marca%TYPE := &marca;
     v_descripcion modelo_coche.descripcion%TYPE;
@@ -9,20 +9,20 @@ DECLARE
     FROM
         modelo_coche ma
     WHERE
-        ma.id_marca = v_id_marca;
+        ma.id_marca = v_id_marca; -- termina el cursor
 
 BEGIN
-    OPEN c_modelos;
+    OPEN c_modelos; -- abres el cursor
     LOOP
-        FETCH c_modelos INTO v_descripcion;
-        EXIT WHEN c_modelos%notfound; -- finaliza cuando no encuentra más filas
-        dbms_output.put_line('Descripcion: ' || v_descripcion);
+        FETCH c_modelos INTO v_descripcion; -- obtiene un valor
+        EXIT WHEN c_modelos%notfound; -- finaliza cuando no encuentra mÃ¡s filas
+        dbms_output.put_line('Descripcion: ' || v_descripcion); -- muestra el valor
     END LOOP;
 
     CLOSE c_modelos;
 END;
 
-// 2. Igual que el anterior pero que también nos muestre el número total de modelos con %ROWCOUNT.
+// 2. Igual que el anterior pero que tambiÃ©n nos muestre el nÃºmero total de modelos con %ROWCOUNT.
 DECLARE
     v_id_marca    modelo_coche.id_marca%TYPE := &marca;
     v_descripcion modelo_coche.descripcion%TYPE;
@@ -39,15 +39,15 @@ BEGIN
     OPEN c_modelos;
     LOOP
         FETCH c_modelos INTO v_descripcion;
-        EXIT WHEN c_modelos%notfound; -- finaliza cuando no encuentra más filas
+        EXIT WHEN c_modelos%notfound; -- finaliza cuando no encuentra mÃ¡s filas
         dbms_output.put_line('Descripcion: ' || v_descripcion);
     END LOOP;
 
-    dbms_output.put_line('Cantidad total de modelos: ' || c_modelos%rowcount);
+    dbms_output.put_line('Cantidad total de modelos: ' || c_modelos%rowcount); -- cuenta la cantidad de filas
     CLOSE c_modelos;
 END;
 
-// 3. Listar los empleados que tienen una antigüedad antes del año 2010
+// 3. Listar los empleados que tienen una antigÃ¼edad antes del aÃ±o 2010
 DECLARE
     v_nombre empleado.nombre%TYPE;
     CURSOR nombresempleados IS

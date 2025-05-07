@@ -14,7 +14,7 @@ BEGIN
     WHERE
         v_marca = ma.marca;
 
-    dbms_output.put_line('Número total de coches: ' || cantidad);
+    dbms_output.put_line('NÃºmero total de coches: ' || cantidad);
 END;
 
 EXEC mostrar_modelos;
@@ -33,7 +33,7 @@ BEGIN
     WHERE
         v_marca = ma.marca;
 
-    dbms_output.put_line('Número total de coches: ' || cantidad);
+    dbms_output.put_line('NÃºmero total de coches: ' || cantidad);
 END;
 
 /* EJECUTARLO */
@@ -43,13 +43,66 @@ BEGIN
     mostrar_modelos(v_marca);
 END;
 
-/*4. Crear un procedimiento ActualizarPrecioCoche que acepte un nuevo_precio y matrícula como parámetro.
-Antes de realizar la actualización, se verifica si la matrícula existe en la tabla coche. 
-Si el la matrícula no existe, guardar una excepción controlada personalizada con RAISE y mostrar un mensaje de error usando DBMS_OUTPUT. 
-(Podéis hacer un select que cuenta los coches con la matrícula pasada por parámetro, en caso de que sea 0 ya sabes que no existe por lo que se puede generar la excepción)
-Utilizar una estructura de control de flujo para verificar si el nuevo_precio es válido, por ejemplo mayor que 0 y menos que 10000.
-Si el precio es válido, actualizar la columna precio_compra de la tabla coche cuya matrícula sea la que hemos pasado por parámetro.
-Si el precio no es válido, guardar una excepción controlada personalizada con RAISE y mostrar un mensaje de error usando DBMS_OUTPUT.*/
+-- 2. Crear un procedimiento que utilice un cursor para listar 
+-- los empleados que tienen una antigÃ¼edad antes del aÃ±o 2010
+CREATE OR REPLACE PROCEDURE listar_empleados_antiguos IS
+    -- DeclaraciÃ³n de la variable para almacenar el nombre
+    v_nombre empleado.nombre%TYPE;
+    -- DeclaraciÃ³n del cursor que selecciona los empleados con fecha de incorporaciÃ³n antes de 2010
+    CURSOR nombresempleados IS
+        SELECT nombre
+        FROM empleado
+        WHERE anio_incorporacion < 2010-01-01;
+BEGIN
+    -- Abrir el cursor
+    OPEN nombresempleados;
+    -- Recorrer el cursor
+    LOOP
+        FETCH nombresempleados INTO v_nombre; -- Obtener el siguiente nombre
+        EXIT WHEN nombresempleados%NOTFOUND; -- Salir cuando no haya mÃ¡s filas
+        DBMS_OUTPUT.PUT_LINE('Empleado: ' || v_nombre); -- Mostrar el nombre
+    END LOOP;
+
+    -- Cerrar el cursor
+    CLOSE nombresempleados;
+END listar_empleados_antiguos;
+
+-- 3 Crear un procedimiento que utilice un cursor para listar la 
+-- descripciÃ³n y el precio de compra de cada coche en la tabla coche
+CREATE OR REPLACE PROCEDURE listar_coches IS
+    -- DeclaraciÃ³n del cursor que selecciona la descripciÃ³n y el precio de compra de los coches
+    CURSOR c_coches IS
+        SELECT descripcion, precio_compra
+        FROM coche;
+
+    -- Variables para almacenar los resultados del cursor
+    v_descripcion coche.descripcion%TYPE;
+    v_precio_compra coche.precio_compra%TYPE;
+BEGIN
+    -- Abrir el cursor
+    OPEN c_coches;
+
+    -- Recorrer el cursor
+    LOOP
+        FETCH c_coches INTO v_descripcion, v_precio_compra; -- Obtener la descripciÃ³n y el precio
+        EXIT WHEN c_coches%NOTFOUND; -- Salir cuando no haya mÃ¡s filas
+
+        -- Mostrar los resultados
+        DBMS_OUTPUT.PUT_LINE('DescripciÃ³n: ' || v_descripcion || ', Precio de compra: ' || v_precio_compra);
+    END LOOP;
+
+    -- Cerrar el cursor
+    CLOSE c_coches;
+END listar_coches;
+
+
+/*4. Crear un procedimiento ActualizarPrecioCoche que acepte un nuevo_precio y matrÃ­cula como parÃ¡metro.
+Antes de realizar la actualizaciÃ³n, se verifica si la matrÃ­cula existe en la tabla coche. 
+Si el la matrÃ­cula no existe, guardar una excepciÃ³n controlada personalizada con RAISE y mostrar un mensaje de error usando DBMS_OUTPUT. 
+(PodÃ©is hacer un select que cuenta los coches con la matrÃ­cula pasada por parÃ¡metro, en caso de que sea 0 ya sabes que no existe por lo que se puede generar la excepciÃ³n)
+Utilizar una estructura de control de flujo para verificar si el nuevo_precio es vÃ¡lido, por ejemplo mayor que 0 y menos que 10000.
+Si el precio es vÃ¡lido, actualizar la columna precio_compra de la tabla coche cuya matrÃ­cula sea la que hemos pasado por parÃ¡metro.
+Si el precio no es vÃ¡lido, guardar una excepciÃ³n controlada personalizada con RAISE y mostrar un mensaje de error usando DBMS_OUTPUT.*/
 
 DECLARE
     v_precio    coche.precio_compra%TYPE := &precio;
@@ -76,7 +129,7 @@ SELECT COUNT(*) INTO v_count FROM coche WHERE
             RAISE errorPrecio;
     END IF; EXCEPTION
     WHEN errorcoche THEN
-        dbms_output.put_line('No se encontró esa matrícula || v_matricula');
+        dbms_output.put_line('No se encontrÃ³ esa matrÃ­cula || v_matricula');
     WHEN errorprecio THEN
         dbms_output.put_line('El nuevo precio '
                              || nuevo_precio

@@ -1,0 +1,24 @@
+BASES DE DATOS - TEORÍA
+
+TEMA 15 (test o puede que corta)
+
+- Detección de errores
+- Sintaxis
+- TYPE, ROWTYPE
+- Pregunta tipo test sobre qué hace un bloque de código
+- Excepciones (interpretar)
+- SQLCODE Y SQLREMM
+- RAISE para qué sirve
+
+TEMA 16
+
+- Qué es un registro
+- 
+
+
+LENGUAJE DE MARCAS
+
+TEMA 19 
+
+- A partir del punto 8 no entra nada
+- punto 6 importante (innerHTML e innerText (texto plano))

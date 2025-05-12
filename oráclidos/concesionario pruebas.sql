@@ -20,7 +20,7 @@ BEGIN
     dbms_output.put_line('La marca es ' || v_marca);
 END;
 
-//2. Igual que el anterior pero capturando una excepciÛn en caso de que no exista el id
+//2. Igual que el anterior pero capturando una excepci√≥n en caso de que no exista el id
 
 SELECT
     *
@@ -47,7 +47,7 @@ EXCEPTION
         dbms_output.put_line('Error desconocido');
 END;
 
-//3. Mostrar el nombre y telÈfono de un cliente dado su dni. (al tratarse de un varchar2 tenÈis que poner el dni entre comillas simples)
+//3. Mostrar el nombre y tel√©fono de un cliente dado su dni. (al tratarse de un varchar2 ten√©is que poner el dni entre comillas simples)
 
 DECLARE
     v_dni    cliente.dni%TYPE := &v_dni1;
@@ -71,7 +71,7 @@ BEGIN
                          || v_telef);
 END;
 
-// 4. Mostrar el nombre y telÈfono de un cliente dado su dni. (lo mismo que el ejercicio anterior pero ahora utilizando %rowtype)
+// 4. Mostrar el nombre y tel√©fono de un cliente dado su dni. (lo mismo que el ejercicio anterior pero ahora utilizando %rowtype)
 
 DECLARE
     v_dni     cliente.dni%TYPE := &v_dni1;
@@ -92,7 +92,7 @@ BEGIN
                          || v_telef);
 END;
 
-//5. Mostrar toda la informaciÛn de un coche dada la matrÌcula (MATRICULA, ID_MODELO, PRECIO_COMPRA)
+//5. Mostrar toda la informaci√≥n de un coche dada la matr√≠cula (MATRICULA, ID_MODELO, PRECIO_COMPRA)
 
 DECLARE
     v_matricula coche.matricula%TYPE := &v_matricula1;
@@ -115,7 +115,7 @@ BEGIN
 
 END;
 
-// 6. Mostrar toda la informaciÛn del modelo de un coche dado un id incluida el nombre de la marca)
+// 6. Mostrar toda la informaci√≥n del modelo de un coche dado un id incluida el nombre de la marca)
 
 DECLARE
     v_id_modelo    modelo_coche.id_modelo%TYPE := &id_modelo1;
@@ -149,7 +149,7 @@ BEGIN
 
 END;
 
-// 7. Mostrar la suma de ventas. Pasa el dni del empleado por par·metro.
+// 7. Mostrar la suma de ventas. Pasa el dni del empleado por par√°metro.
 
 DECLARE
     v_dni_empleado vende.dni_empleado%TYPE := &dni_empleado;
@@ -184,10 +184,14 @@ BEGIN
     WHERE
         v_marca = ma.marca;
 
-    dbms_output.put_line('N˙mero total de coches: ' || cantidad);
+    dbms_output.put_line('N√∫mero total de coches: ' || cantidad);
 END;
 
-// 9. 
+/* 9.Mostrar la suma de ventas. Pasa el dni del empleado por par√°metro. 
+Si el precio de las ventas est√° en NULL, debe mostrarse un mensaje 
+indicando que no hay ventas registradas. En caso contrario, debe 
+mostrarse el total de ventas mediante DBMS_OUTPUT.PUT_LINE. */
+
 DECLARE
     v_dni_empleado vende.dni_empleado%TYPE := &dni_empleado;
     v_precio       vende.precio%TYPE;

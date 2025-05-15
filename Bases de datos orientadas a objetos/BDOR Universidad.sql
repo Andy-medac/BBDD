@@ -2,6 +2,10 @@ DROP TYPE persona FORCE;
 
 DROP TYPE direccion FORCE;
 
+DROP TYPE alumno FORCE;
+
+DROP TYPE profesor FORCE;
+
 -- Definicion de un tipo para direccion
 CREATE OR REPLACE TYPE direccion AS OBJECT (
         calle         VARCHAR2(50),
@@ -56,6 +60,7 @@ END;
 
 -- Creación de tablas para almacenar objetos alumno y profesor
 CREATE TABLE alumnos OF alumno;
+
 
 CREATE TABLE profesores OF profesor;
 
@@ -139,4 +144,117 @@ BEGIN
         pr.asignatura = 'Informática';
 
     dbms_output.put_line('El salario es de: ' || p.salario);
+END;
+
+-- CREAR UN ARRAY
+CREATE OR REPLACE TYPE telefonoVArray as varray(3) of varchar2(9);
+
+CREATE OR REPLACE TYPE administrativo UNDER Persona (
+    categoria VARCHAR2(50),
+    telefonos telefonoVArray,
+    MEMBER FUNCTION bonus(base NUMBER) RETURN NUMBER,
+    -- MEMBER FUCTION bonus(base NUMBER) RETURN NUMBER  esta sobrecarga no sería válida, porque tiene el mismo nombre, mismo parámetro que recibe y retorna el mismo tipo de dato
+    -- MEMBER FUCTION bonus(hola NUMBER) RETURN NUMBER tampoco sería válido
+    -- MEMBER FUCTION bonus(hola NUMBER, base NUMBER) RETURN NUMBER
+    -- MEMBER FUCTION bonus(base NUMBER, hola NUMBER) RETURN NUMBER estas dos tampoco serían válidas
+    MEMBER FUNCTION bonus(base NUMBER, base1 NUMBER) RETURN NUMBER -- esto sería válido
+    
+);
+
+CREATE OR REPLACE TYPE Becario UNDER Persona (
+    universidad VARCHAR(50),
+    telefonos telefonoVArray,
+    -- POLIMORFISMO CON OVERRIDING
+    OVERRIDING MEMBER FUNCTION calcularEdad RETURN Number
+);
+
+CREATE OR REPLACE TYPE BODY Administrativo AS
+    MEMBER FUNCTION bonus(base NUMBER) RETURN NUMBER IS
+    BEGIN
+    -- SE USA EL SELF PARA DIFERENCIAR EL ATRIBUTO DE LA VARIABLE
+        RETURN base*1.1;
+    END;
+    
+    MEMBER FUNCTION bonus(base NUMBER, base1 NUMBER) RETURN NUMBER IS
+    BEGIN
+        RETURN (base + base1);
+    END;
+END;
+
+CREATE OR REPLACE TYPE BODY becario AS OVERRIDING
+    MEMBER FUNCTION calcularedad RETURN NUMBER IS
+    BEGIN
+        RETURN floor(months_between(sysdate, fecha_nacimiento) / 12);
+    END calcularedad;
+
+END;
+
+CREATE TABLE becarios OF becario;
+CREATE TABLE administrativos OF administrativo;
+
+-- bloque de prueba, crear objeto y comprobar funciones
+
+DECLARE
+    a administrativo;
+    b becario;
+BEGIN
+    a := NEW administrativo('Adrián', 'Segura', direccion('Calle oficina', 'Madrid', 20100), '01-06-1985', 'ugr', telefonovarray('123456789'
+    , '987654321', '999999999'));
+
+    b := NEW becario('Carlos', 'Ramos', direccion('Calle oficina', 'Madrid', 20100), '25-03-1999', 'UJA', telefonovarray('123456789')
+    );
+
+    dbms_output.put_line('Sueldo base del administrativo: ' || a.bonus(1000));
+    dbms_output.put_line('Sueldo base + extra del administrativo: '
+                         || a.bonus(1000, 200));
+    dbms_output.put_line('Edad del becario: ' || b.calcularedad);
+END;
+
+
+-- MÉTODOS ESTÁTICOS
+
+CREATE OR REPLACE TYPE dispositivo AS OBJECT (
+        modelo  VARCHAR2(50),
+        consumo NUMBER,
+        CONSTRUCTOR FUNCTION dispositivo (
+               cosumo NUMBER,
+               modelo VARCHAR2
+           ) RETURN SELF AS RESULT,
+-- MAP se usa para ordenar de mayor a menor
+        MAP MEMBER FUNCTION mapconsumo RETURN NUMBER,
+        STATIC FUNCTION tipouso RETURN VARCHAR2
+);
+
+CREATE OR replace type body dispositivo as 
+constructor
+    FUNCTION dispositivo (
+        consumo NUMBER,
+        modelo  VARCHAR2
+    ) RETURN SELF AS RESULT IS
+    BEGIN
+        self.consumo := consumo;
+        self.modelo := modelo;
+        RETURN;
+    END;
+map member
+    FUNCTION mapconsumo RETURN NUMBER IS
+    BEGIN
+        RETURN self.consumo;
+    END;
+STATIC FUNCTION tipouso RETURN VARCHAR2 is
+    begin
+        RETURN 'Electrónico';
+     end;
+end;
+
+drop type dispositivo force;
+-- crear un bloque anónimo para la estructura de arriba
+DECLARE
+    d1 dispositivo := NEW dispositivo(1200, 'Aire Acondicionado');
+    d2 dispositivo := NEW dispositivo(75, 'Aspiradora');
+BEGIN
+    dbms_output.put_line('El dispositivo '
+                         || d1.modelo
+                         || ' es de tipo '
+                         || dispositivo.tipouso);
 END;
